@@ -1,0 +1,72 @@
+.box{
+    height: 60px;
+    display: flex;
+    background-color: orange;
+}
+.rightBox{
+    margin-left: auto;
+    margin-right: 2%;
+    margin-top: 0.7%;
+    display: flex;
+}
+.home{
+    margin: 0.7%;
+    margin-left: 3%;
+    border: 1px solid black;
+    width: 60px;
+    height: 30px;
+    padding-left: 0.7%;
+    padding-top: 0.2%;
+    background-color: lightgray;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+.singUp{
+    border: 1px solid black;
+    width: 80px;
+    height: 30px;
+    padding-left: 5%;
+    padding-top: 2.64%;
+    background-color: lightgray;
+    text-decoration: none;
+    font-weight: bold;
+    margin-right: 5%;
+    color: black;
+}
+.login{
+    border: 1px solid black;
+    width: 60px;
+    height: 30px;
+    padding-left: 5%;
+    padding-top: 2.64%;
+    background-color: lightgray;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+.logout{
+    border: 1px solid black;
+    width: 65px;
+    height: 37px;
+    padding-left: 5%;
+    padding-top: 2.64%;
+    background-color: lightgray;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: medium;
+    color: black;
+}
+.scoreBoard{
+    margin-top: 0.7%;
+    margin-left: 0.5%;
+    border: 1px solid black;
+    width: 95px;
+    height: 30px;
+    padding-left: 0.7%;
+    padding-top: 0.2%;
+    background-color: lightgray;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}

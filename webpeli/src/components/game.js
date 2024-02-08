@@ -1,5 +1,6 @@
-import kaboom, { Color } from 'kaboom'
+import kaboom from 'kaboom'
 import React,{useEffect} from 'react'
+import style from './game.module.css'
 import fox from '../Sprites/foxSprite.png'
 import stone from '../Sprites/stone.png'
 import apple from '../Sprites/apple.png'
@@ -15,8 +16,8 @@ export default function Game() {
 
     useEffect(()=>{
         const k = kaboom({
-            width:800,
-            height:400,
+            width:940,
+            height:450,
             global:false,
             canvas:canvas.current,
             background:[0,0,0],
@@ -89,6 +90,7 @@ export default function Game() {
             "        ",
             "        ",
             "        ",
+            "        ",
         ],{
             tileWidth:64,
             tileHeight:64,
@@ -97,7 +99,7 @@ export default function Game() {
                     k.sprite("grass"),
                     k.tile(),
                     k.outline(3),
-                    k.pos(50,10)
+                    k.pos(50,1)
                 ]
             }
         })
@@ -108,7 +110,8 @@ export default function Game() {
             " &   #  &",
             " &     %&",
             " &¤    @&",
-            " &&&&&&&&",
+            " &      &",
+            " &&&&&&&&"
         ],{
             tileWidth:64,
             tileHeight:64,
@@ -119,7 +122,7 @@ export default function Game() {
                     k.body({isStatic:true}),
                     k.area({collisionIgnore:"player"}),
                     k.anchor("center"),
-                    k.pos(18,42),
+                    k.pos(18,33),
                     "wall"
                 ],
                 "@":()=>[
@@ -127,13 +130,13 @@ export default function Game() {
                     k.tile({isObstacle:true}),
                     k.area({scale:1}),
                     k.anchor("center"),
-                    k.pos(18,42),
+                    k.pos(18,33),
                     "goal",
                     {open:false}
                 ],
                 "¤":()=>[
                     k.sprite("apple"),
-                    k.pos(18,42),
+                    k.pos(18,33),
                     k.area({scale:1}),
                     k.anchor("center"),
                     "apple"
@@ -144,7 +147,7 @@ export default function Game() {
                     k.tile({isObstacle:true,edges:["left","right","top","bottom"]}),
                     k.area(),
                     k.anchor("center"),
-                    k.pos(18,42),
+                    k.pos(18,33),
                     "bush"
                 ],
                 "%":()=>[
@@ -153,7 +156,7 @@ export default function Game() {
                     k.tile({isObstacle:true}),
                     k.area(),
                     k.anchor("center"),
-                    k.pos(18,42),
+                    k.pos(18,33),
                     k.timer(),
                     k.z(1),
                     {alive:true},
@@ -340,5 +343,9 @@ export default function Game() {
     k.go("main",0)
     },[])
 
-    return <canvas ref={canvas}/>
+    return (
+        <div className={style.game}>
+            <canvas ref={canvas}/>
+        </div>
+    )
 }

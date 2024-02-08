@@ -1,0 +1,82 @@
+.box{
+    background-color: black;
+    border: 2px solid black;
+    margin-left: auto;
+    margin-right: auto;
+    width: 900px;
+    height: auto;
+    max-height: 798px;
+    overflow-y: scroll;
+}
+.boxTop{
+    margin-left: auto;
+    margin-right: auto;
+    width: 900px;
+    display: flex;
+    border: 2px solid orange;
+    overflow-y: visible;
+    background-color: black;
+}
+.userNameTop{
+    margin: 1%;
+    margin-left: 2%;
+    color: white;
+    font-size: larger;
+    font-weight: bold;
+}
+.positionTop{
+    margin: 1%;
+    color: white;
+    font-size: larger;
+    font-weight: bold;
+}
+.scoreTop{
+    margin: 1%;
+    margin-left: auto;
+    margin-right: 3%;
+    color: white;
+    font-size: larger;
+    font-weight: bold;
+}
+.title{
+    font-size: xx-large;
+    margin-left: 44%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    text-decoration: underline;
+    color: white;
+}
+.scoreRow{
+    display: flex;
+    border: 1px solid orange;
+}
+.userName{
+    margin: 1%;
+    margin-left: 4%;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}
+.usersName{
+    margin: 1%;
+    margin-left: 4%;
+    color: orange;
+    font-size: large;
+    font-weight: bold;
+}
+.score{
+    margin: 1%;
+    margin-left: auto;
+    margin-right: 3%;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}
+.position{
+    margin: 1%;
+    margin-left: 3%;
+    width: 40px;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}
