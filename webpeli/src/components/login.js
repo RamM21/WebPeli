@@ -38,7 +38,7 @@ export default function Login(props) {
 
 
     return(
-        <div>
+        <div className={style.background}>
             <div className={style.box}>
                 <div>
                     <h4 className={style.topText}>Login</h4>

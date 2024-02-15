@@ -3,9 +3,13 @@
     background-color: orange;
     border-radius: 5%;
     margin-left: 44%;
-    margin-top: 10%;
     width: 240px;
     height: 220px;
+}
+.background{
+    padding-top: 10%;
+    padding-bottom: 26.95%;
+    background-color: black;
 }
 .topText{
     margin-left: 35%;

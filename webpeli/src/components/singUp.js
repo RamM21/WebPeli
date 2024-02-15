@@ -41,31 +41,33 @@ export default function SingUp() {
     }
 
     return(
-        <div className={style.box}>
-            <h4 className={style.topText}>SignUp</h4>
-            <div>
-                <div className={style.inputText}>Email</div>
-                <input className={style.input} onChange={(event)=>setEmail(event.target.value)}/>
-            </div>
-            <div>
-                <div className={style.inputText}>User Name</div>
-                <input className={style.input} onChange={(event)=>setUserName(event.target.value)}/>
-            </div>
-            <div>
-                <div className={style.inputText}>Password</div>
-                <div style={{display:"flex"}}>
-                    {showPassword ? <input className={style.input} type="text" onChange={(event)=>setPassword(event.target.value)}/>:<input className={style.input} type="password" onChange={(event)=>setPassword(event.target.value)}/>}
-                    <button className={style.showButton} onMouseDown={()=>setShowPassword(true)} onMouseUp={()=>setShowPassword(false)}>show</button>
+        <div className={style.background}>
+            <div className={style.box}>
+                <h4 className={style.topText}>SignUp</h4>
+                <div>
+                    <div className={style.inputText}>Email</div>
+                    <input className={style.input} onChange={(event)=>setEmail(event.target.value)}/>
                 </div>
-            </div>
-            <div>
-                <div className={style.inputText}>Confirm Password</div>
-                <div style={{display:"flex"}}>
-                    {showConfirmPassword ? <input className={style.input} type="text" onChange={(event)=>setConfirmPassword(event.target.value)}/>:<input className={style.input} type="password" onChange={(event)=>setConfirmPassword(event.target.value)}/>}
-                    <button className={style.showButton} onMouseDown={()=>setShowConfirmPassword(true)} onMouseUp={()=>setShowConfirmPassword(false)}>show</button>
+                <div>
+                    <div className={style.inputText}>UserName</div>
+                    <input className={style.input} onChange={(event)=>setUserName(event.target.value)}/>
                 </div>
+                <div>
+                    <div className={style.inputText}>Password</div>
+                    <div style={{display:"flex"}}>
+                        {showPassword ? <input className={style.input} type="text" onChange={(event)=>setPassword(event.target.value)}/>:<input className={style.input} type="password" onChange={(event)=>setPassword(event.target.value)}/>}
+                        <button className={style.showButton} onMouseDown={()=>setShowPassword(true)} onMouseUp={()=>setShowPassword(false)}>show</button>
+                    </div>
+                </div>
+                <div>
+                    <div className={style.inputText}>Confirm Password</div>
+                    <div style={{display:"flex"}}>
+                        {showConfirmPassword ? <input className={style.input} type="text" onChange={(event)=>setConfirmPassword(event.target.value)}/>:<input className={style.input} type="password" onChange={(event)=>setConfirmPassword(event.target.value)}/>}
+                        <button className={style.showButton} onMouseDown={()=>setShowConfirmPassword(true)} onMouseUp={()=>setShowConfirmPassword(false)}>show</button>
+                    </div>
+                </div>
+                <button className={style.signUpButton} onClick={()=>signUp()}>Sign Up</button>
             </div>
-            <button className={style.signUpButton} onClick={()=>signUp()}>Sign Up</button>
         </div>
     )
 
