@@ -13,11 +13,11 @@ import slime from '../Sprites/slimeSprite.png'
 
 export default function Game() {
     const canvas = React.useRef(null)
-    function saveScore(score,level){
+    /*function saveScore(score,level){
         sessionStorage.setItem("score",score)
         sessionStorage.setItem("levelIdx",level)
-        console.log(sessionStorage.getItem("score"))
-    }
+        console.log("score from storage:"+sessionStorage.getItem("score"))
+    }*/
     useEffect(()=>{
         const k = kaboom({
             width:940,
@@ -110,11 +110,11 @@ export default function Game() {
             })
 
             btn.onClick(()=>{
-                k.go("game",0)
+                k.go("game",0,0)
             })
         })
 
-        k.scene("win",()=>{
+        k.scene("win",(finalScore)=>{
             k.debug.inspect=true
             k.add([
                 k.pos(k.width()/3,30),
@@ -129,7 +129,7 @@ export default function Game() {
             ])
             k.add([
                 k.pos(k.width()/2.3,200),
-                k.text(sessionStorage.getItem("score"),{width:50}),
+                k.text(finalScore,{width:50}),
                 k.color(255,165,0)
             ])
             const btn = k.add([
@@ -149,6 +149,8 @@ export default function Game() {
             ])
 
             btn.onClick(()=>{
+                sessionStorage.removeItem("score")
+                sessionStorage.removeItem("levelIdx")
                 k.go("main")
             })
 
@@ -160,7 +162,7 @@ export default function Game() {
             })
         })
 
-        k.scene("game",(levelIdx)=>{
+        k.scene("game",(levelIdx,score)=>{
 
         k.addLevel([
             "           ",
@@ -188,17 +190,17 @@ export default function Game() {
                 " &&&&&&&&&&&",
                 " & ! #     &",
                 " &   #     &",
-                " &         &",
+                " &     <   &",
                 " &¤     @  &",
-                " &  ??     &",
+                " &  ??>    &",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
                 " & ! #     &",
                 " &   #     &",
-                " &      %  &",
-                " &¤    %  @&",
+                " &      <  &",
+                " &¤    <  @&",
                 " &  ??     &",
                 " &&&&&&&&&&&"
             ],
@@ -207,7 +209,7 @@ export default function Game() {
                 " & !  ?    &",
                 " &&&##&&&&&&",
                 " &         &",
-                " &¤     %  &",
+                " &¤     >  &",
                 " &        @&",
                 " &&&&&&&&&&&"
             ],
@@ -223,7 +225,7 @@ export default function Game() {
                     k.area({collisionIgnore:"player"}),
                     k.anchor("center"),
                     k.pos(68,38),
-                    "wall"
+                    "stone"
                 ],
                 "@":()=>[
                     k.sprite("goal"),
@@ -250,6 +252,30 @@ export default function Game() {
                     k.pos(68,38),
                     "bush"
                 ],
+                "<":()=>[
+                    k.sprite("slime",{anim:"idle"}),
+                    k.body({isStatic:true}),
+                    k.tile({isObstacle:true}),
+                    k.area(),
+                    k.anchor("center"),
+                    k.pos(68,38),
+                    k.timer(),
+                    k.z(1),
+                    {alive:true,moving:true,direction:"vertical",turn:false},
+                    "enemy"
+                ],
+                ">":()=>[
+                    k.sprite("slime",{anim:"idle"}),
+                    k.body({isStatic:true}),
+                    k.tile({isObstacle:true}),
+                    k.area(),
+                    k.anchor("center"),
+                    k.pos(68,38),
+                    k.timer(),
+                    k.z(1),
+                    {alive:true,moving:true,direction:"horizontal",turn:false},
+                    "enemy"
+                ],
                 "%":()=>[
                     k.sprite("slime",{anim:"idle"}),
                     k.body({isStatic:true}),
@@ -259,7 +285,7 @@ export default function Game() {
                     k.pos(68,38),
                     k.timer(),
                     k.z(1),
-                    {alive:true},
+                    {alive:true,moving:false,direction:"horizontal",turn:false},
                     "enemy"
                 ],
                 "?":()=>[
@@ -281,16 +307,33 @@ export default function Game() {
             }
         })
 
-        k.add([
+        let stepCount = 0
+        switch(levelIdx){
+            case 0:
+                stepCount=10
+                break;
+            case 1:
+                stepCount=12
+                break;
+            case 2:
+                stepCount=15
+                break;
+        }
+
+        const steps = k.add([
             k.circle(50),
             k.pos(50,420),
             k.color(255,165,0),
             k.outline(3)
         ])
-
+        const stepText = steps.add([
+            k.text(stepCount,{size:45}),
+            k.anchor("center"),
+            k.color(0,0,0)
+        ])
+        sessionStorage.setItem("score",score)
         const player = map.get("player")[0]
-        const enemy = map.get("enemy")[0]
-        let score=0
+        let levelScore=0
 
         player.onCollideUpdate("apple",(apple,col)=>{
             if(col.hasOverlap()){
@@ -303,9 +346,14 @@ export default function Game() {
 
         player.onCollideUpdate("coin",(coin,col)=>{
             if(col.hasOverlap()){
-                score++
-                console.log(score)
+                levelScore++
                 k.destroy(coin) 
+            }
+        })
+
+        k.onCollideUpdate("coin","stone",(coin,stone,col)=>{
+            if(col.hasOverlap()){
+                k.destroy(coin)
             }
         })
 
@@ -313,18 +361,21 @@ export default function Game() {
             if(goal.open){
                 if(col.hasOverlap()){
                     if(levelIdx+1 < levels.length){
-                        const newScore = Number(sessionStorage.getItem("score"))+score
                         const nextLevel = levelIdx+1
-                        console.log("calling saveScore")
-                        saveScore(newScore,nextLevel)
-                        k.go("game",levelIdx+1)
+                        sessionStorage.setItem("levelIdx",nextLevel)
+                        //saveScore(newScore,nextLevel)
+                        k.go("game",nextLevel,score+levelScore)
                     }else{
-                        const newScore = Number(sessionStorage.getItem("score"))+score
-                        console.log("calling saveScore")
-                        saveScore(newScore,0)
-                        k.go("win")
+                        //saveScore(newScore,0)
+                        k.go("win",score+levelScore)
                     }
                 }
+            }
+        })
+
+        k.onUpdate(()=>{
+            if(stepCount<0){
+                k.go("game",levelIdx,score)
             }
         })
 
@@ -357,10 +408,10 @@ export default function Game() {
         })
 
         k.onDestroy("player",()=>{
-            k.go("game",levelIdx)
+            k.go("game",levelIdx,score)
         })
 
-        k.onCollideUpdate("wall","enemy",(wall,enemy,col)=>{
+        k.onCollideUpdate("stone","enemy",(stone,enemy,col)=>{
             if(col.hasOverlap()){
                 if(enemy.alive){
                     enemy.alive=false
@@ -390,7 +441,7 @@ export default function Game() {
                             stop=true
                         }
                     }
-                    if(object.is("wall")){
+                    if(object.is("stone")){
                         const x = player.pos.x-object.pos.x
                         const y = player.pos.y-object.pos.y
                         if(move==="left" && x>0 && y===0){
@@ -471,16 +522,51 @@ export default function Game() {
         }
 
         function enemyMove(){
-            
-            enemy.moveTo(enemy.pos.x-64,enemy.pos.y)
+            for(const enemy of map.get("enemy")){
+                for(const collisionEnemy of enemy.getCollisions()){
+                    const object = collisionEnemy.target
+                    if(object.is("bush")){
+                        let x = enemy.pos.x-object.pos.x
+                        let y = enemy.pos.y-object.pos.y
+                        if(enemy.direction==="horizontal" && x>0 && y===0){
+                            enemy.turn=true
+                        }
+                        if(enemy.direction==="horizontal" && x<0 && y===0){
+                            enemy.turn=false
+                        }
+                        if(enemy.direction==="vertical" && y>0 && x===0){
+                            enemy.turn=true
+                        }
+                        if(enemy.direction==="vertical" && y<0 && x===0){
+                            enemy.turn=false
+                        }
+                    }
+                }
+                if(enemy.direction==="horizontal" && enemy.moving && enemy.alive){
+                    if(enemy.turn){
+                        enemy.moveTo(enemy.pos.x+64,enemy.pos.y)
+                    }else{
+                        enemy.moveTo(enemy.pos.x-64,enemy.pos.y)
+                    }
+                }
+                if(enemy.direction==="vertical" && enemy.moving && enemy.alive){
+                    if(enemy.turn){
+                        enemy.moveTo(enemy.pos.x,enemy.pos.y+64)
+                    }else{
+                        enemy.moveTo(enemy.pos.x,enemy.pos.y-64)
+                    }
+                }
+            }
         }
 
 
         k.onKeyPress("right",()=>{
             player.flipX=false
             if(checkCol("right")){
+                stepCount--
+                stepText.text=stepCount
                 player.moveTo(player.pos.x+64,player.pos.y)
-                if(enemy){
+                if(map.get("enemy").length>0){
                     enemyMove()
                 }
             }
@@ -489,8 +575,10 @@ export default function Game() {
         k.onKeyPress("left",()=>{
             player.flipX=true
             if(checkCol("left")){
+                stepCount--
+                stepText.text=stepCount
                 player.moveTo(player.pos.x-64,player.pos.y)
-                if(enemy){
+                if(map.get("enemy").length>0){
                     enemyMove()
                 }
             }
@@ -498,8 +586,10 @@ export default function Game() {
 
         k.onKeyPress("up",()=>{
             if(checkCol("up")){
+                stepCount--
+                stepText.text=stepCount
                 player.moveTo(player.pos.x,player.pos.y-64)
-                if(enemy){
+                if(map.get("enemy").length>0){
                     enemyMove()
                 }
             }
@@ -507,8 +597,10 @@ export default function Game() {
 
         k.onKeyPress("down",()=>{
             if(checkCol("down")){
+                stepCount--
+                stepText.text=stepCount
                 player.moveTo(player.pos.x,player.pos.y+64)
-                if(enemy){
+                if(map.get("enemy").length>0){
                     enemyMove()
                 }
             }
@@ -518,9 +610,8 @@ export default function Game() {
         k.debug.inspect=true
     })
     if(sessionStorage.getItem("levelIdx")>0){
-        k.go("game",sessionStorage.getItem("levelIdx"))
+        k.go("game",Number(sessionStorage.getItem("levelIdx")),Number(sessionStorage.getItem("score")))
     }else{
-        sessionStorage.setItem("score",0)
         sessionStorage.setItem("levelIdx",0)
         k.go("main")
     }
