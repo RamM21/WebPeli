@@ -46,6 +46,7 @@
     color: black;
 }
 .logout{
+    margin-left: 20%;
     border: 1px solid black;
     width: 65px;
     height: 37px;
@@ -55,6 +56,17 @@
     text-decoration: none;
     font-weight: bold;
     font-size: medium;
+    color: black;
+}
+.account{
+    padding-top: 3%;
+    padding-left: 3%;
+    border: 1px solid black;
+    width: 70px;
+    height: 30px;
+    background-color: lightgray;
+    text-decoration: none;
+    font-weight: bold;
     color: black;
 }
 .scoreBoard{

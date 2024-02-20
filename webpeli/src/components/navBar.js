@@ -16,6 +16,7 @@ export default function NavBar(props) {
                 <Link className={style.home} to='/'>Home</Link>
                 <Link className={style.scoreBoard} to='/scoreBoard'>ScoreBoard</Link>
                 <div className={style.rightBox}>
+                    <Link to='/account' className={style.account}>Account</Link>
                     <Link to='/'><button className={style.logout} onClick={()=>logout()}>Logout</button></Link>
                 </div>
             </div>

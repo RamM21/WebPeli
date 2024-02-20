@@ -3,6 +3,7 @@ import NavBar from './components/navBar'
 import SingUp from './components/singUp'
 import Login from './components/login'
 import ScoreBoard from './components/scoreBoard'
+import Account from './components/account'
 import { useEffect, useState } from 'react'
 import {BrowserRouter,Routes,Route} from 'react-router-dom'
 
@@ -21,6 +22,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Game/>}/>
         <Route path='/scoreBoard' element={<ScoreBoard/>}/>
+        <Route path='/account' element={<Account/>}/>
       </Routes>
     </BrowserRouter>
   )

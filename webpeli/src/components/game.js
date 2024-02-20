@@ -1,5 +1,5 @@
 import kaboom from 'kaboom'
-import React,{useEffect, useState} from 'react'
+import React,{useEffect} from 'react'
 import style from './game.module.css'
 import fox from '../Sprites/foxSprite.png'
 import stone from '../Sprites/stone.png'
@@ -115,6 +115,7 @@ export default function Game() {
         })
 
         k.scene("win",(finalScore)=>{
+            sessionStorage.setItem("score",finalScore)
             k.debug.inspect=true
             k.add([
                 k.pos(k.width()/3,30),
@@ -128,9 +129,9 @@ export default function Game() {
                 k.color(255,165,0)
             ])
             k.add([
-                k.pos(k.width()/2.3,200),
-                k.text(finalScore,{width:50}),
-                k.color(255,165,0)
+                k.pos(k.width()/2.9,200),
+                k.text(finalScore,{width:200,align:"center"}),
+                k.color(255,165,0),
             ])
             const btn = k.add([
                 k.pos(k.width()/2.22,390),
@@ -230,7 +231,7 @@ export default function Game() {
                 "@":()=>[
                     k.sprite("goal"),
                     k.tile({isObstacle:true}),
-                    k.area({scale:0.9}),
+                    k.area({scale:1}),
                     k.anchor("center"),
                     k.pos(68,38),
                     "goal",
@@ -310,19 +311,21 @@ export default function Game() {
         let stepCount = 0
         switch(levelIdx){
             case 0:
-                stepCount=10
-                break;
-            case 1:
-                stepCount=12
-                break;
-            case 2:
                 stepCount=15
                 break;
+            case 1:
+                stepCount=15
+                break;
+            case 2:
+                stepCount=20
+                break;
+            default:
+                stepCount=20
         }
 
         const steps = k.add([
             k.circle(50),
-            k.pos(50,420),
+            k.pos(50,40),
             k.color(255,165,0),
             k.outline(3)
         ])
@@ -337,16 +340,16 @@ export default function Game() {
 
         player.onCollideUpdate("apple",(apple,col)=>{
             if(col.hasOverlap()){
-                k.destroy(apple)
                 const goal = map.get("goal")[0]
                 goal.open=true
                 goal.play("open")
+                k.destroy(apple)
             }
         })
 
         player.onCollideUpdate("coin",(coin,col)=>{
             if(col.hasOverlap()){
-                levelScore++
+                levelScore+=200
                 k.destroy(coin) 
             }
         })
@@ -357,45 +360,38 @@ export default function Game() {
             }
         })
 
-        player.onCollide("goal",(goal,col)=>{
+        k.onCollideUpdate("apple","stone",(apple,stone,col)=>{
+            if(col.hasOverlap()){
+                k.destroy(apple)
+            }
+        })
+
+        k.onDestroy("apple",()=>{
+            const goal = map.get("goal")[0]
+            if(!goal.open){
+                k.go("game",levelIdx,score)
+            }
+        })
+
+        player.onCollideUpdate("goal",(goal,col)=>{
             if(goal.open){
                 if(col.hasOverlap()){
                     if(levelIdx+1 < levels.length){
                         const nextLevel = levelIdx+1
                         sessionStorage.setItem("levelIdx",nextLevel)
-                        //saveScore(newScore,nextLevel)
+                        levelScore+=stepCount*50
                         k.go("game",nextLevel,score+levelScore)
                     }else{
-                        //saveScore(newScore,0)
+                        levelScore+=stepCount*50
                         k.go("win",score+levelScore)
                     }
                 }
             }
         })
 
-        k.onUpdate(()=>{
+        /*k.onUpdate(()=>{
             if(stepCount<0){
                 k.go("game",levelIdx,score)
-            }
-        })
-
-        /*k.onKeyPress("space",()=>{
-            for(const collicionPlayer of player.getCollisions()){
-                const object = collicionPlayer.target
-                if(object.is("goal")){
-                    if(object.open){
-                        if(levelIdx+1 < levels.length){
-                            const nextLevel = levelIdx+1
-                            sessionStorage.setItem("score",Number(sessionStorage.getItem("score"))+score)
-                            sessionStorage.setItem("levelIdx",nextLevel.toString())
-                            k.go("game",levelIdx+1)
-                        }else{
-                            sessionStorage.setItem("score",Number(sessionStorage.getItem("score"))+score)
-                            sessionStorage.setItem("levelIdx",0)
-                            k.go("win")
-                        }
-                    }
-                }
             }
         })*/
 
@@ -414,6 +410,7 @@ export default function Game() {
         k.onCollideUpdate("stone","enemy",(stone,enemy,col)=>{
             if(col.hasOverlap()){
                 if(enemy.alive){
+                    levelScore+=100
                     enemy.alive=false
                     enemy.play("death")
                 }
@@ -503,6 +500,32 @@ export default function Game() {
                 for(const collisionStone of target.getCollisions()){
                     const object = collisionStone.target
                     if(object.is("bush")){
+                        let x = target.pos.x-object.pos.x
+                        let y = target.pos.y-object.pos.y
+                        if(move==="left" && x>0 && y===0){
+                            return true
+                        }if(move==="right" && x<0 && y===0){
+                            return true
+                        }if(move==="up" && x===0 && y>0){
+                            return true
+                        }if(move==="down" && x===0 && y<0){
+                            return true
+                        }
+                    }
+                    if(object.is("stone")){
+                        let x = target.pos.x-object.pos.x
+                        let y = target.pos.y-object.pos.y
+                        if(move==="left" && x>0 && y===0){
+                            return true
+                        }if(move==="right" && x<0 && y===0){
+                            return true
+                        }if(move==="up" && x===0 && y>0){
+                            return true
+                        }if(move==="down" && x===0 && y<0){
+                            return true
+                        }
+                    }
+                    if(object.is("goal")){
                         let x = target.pos.x-object.pos.x
                         let y = target.pos.y-object.pos.y
                         if(move==="left" && x>0 && y===0){
