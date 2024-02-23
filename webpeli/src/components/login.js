@@ -15,7 +15,7 @@ export default function Login(props) {
     
     function login(){
         if(email.length>0 && password.length>0){
-            axios.post('',{"email":email,"password":password})
+            axios.post(process.env.REACT_APP_LOGIN,{"email":email,"password":password})
             .then(Response=>{
                 if(Response.data.successful===true){
                     alert.success("Login successful redirecting to mainpage")

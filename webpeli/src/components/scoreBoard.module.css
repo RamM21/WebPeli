@@ -64,6 +64,22 @@
     font-size: large;
     font-weight: bold;
 }
+.usersPosition{
+    margin: 1%;
+    margin-left: 3%;
+    width: 40px;
+    color: orange;
+    font-size: large;
+    font-weight: bold;
+}
+.usersScore{
+    margin: 1%;
+    margin-left: auto;
+    margin-right: 3%;
+    color: orange;
+    font-size: large;
+    font-weight: bold;
+}
 .score{
     margin: 1%;
     margin-left: auto;

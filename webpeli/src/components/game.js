@@ -189,20 +189,20 @@ export default function Game() {
         const levels=[
             [
                 " &&&&&&&&&&&",
-                " & ! #     &",
-                " &   #     &",
-                " &     <   &",
-                " &¤     @  &",
-                " &  ??>    &",
+                " & !     ? &",
+                " &&&  &&&&&&",
+                " &    ?? &@&",
+                " &¤&&&&&&& &",
+                " &         &",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
-                " & ! #     &",
-                " &   #     &",
-                " &      <  &",
-                " &¤    <  @&",
-                " &  ??     &",
+                " & ! &     &",
+                " &   & @  ?&",
+                " &   &&   &&",
+                " &         &",
+                " &  ?? &¤  &",
                 " &&&&&&&&&&&"
             ],
             [
@@ -210,10 +210,55 @@ export default function Game() {
                 " & !  ?    &",
                 " &&&##&&&&&&",
                 " &         &",
-                " &¤     >  &",
-                " &        @&",
+                " &¤  &#    &",
+                " &  ?? &  @&",
                 " &&&&&&&&&&&"
             ],
+            [
+                " &&&&&&&&&&&",
+                " &    #   &&",
+                " & !  & &  &",
+                " &&&&&&#&&?&",
+                " &??    @&?&",
+                " &    ¤    &",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " &!        &",
+                " &&?&&   &&&",
+                " &&¤  %#   &",
+                " &@%   ??  &",
+                " &&        &",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " &¤   %   @&",
+                " &&&  & ?  &",
+                " &?&&%&&&&&&",
+                " &?    ?#  &",
+                " &        !&",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " &@   ?    &",
+                " &&&      >&",
+                " &<   !# &&&",
+                " &  >&&?   &",
+                " & ¤       &",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " &?       @&",
+                " && &&&&&&&&",
+                " &? &¤ #? !&",
+                " & <&     >&",
+                " &&   <    &",
+                " &&&&&&&&&&&"
+            ]
         ]
         const map = k.addLevel(levels[levelIdx],{
             tileWidth:64,
@@ -308,10 +353,19 @@ export default function Game() {
             }
         })
 
+        //Setting stepcount and text to scene at levels
         let stepCount = 0
+        let text = []
         switch(levelIdx){
             case 0:
-                stepCount=15
+                stepCount=25
+                text = [
+                    "Hey there I'm gonna need your help to get back home",
+                    "But first we need to get the apple to snack on at home",
+                    "To score most points let's be efficient with the movement",
+                    "The coins give extra points but having extra steps gives points too",
+                    "Stepcount can be seen up left in the screen"
+                ]
                 break;
             case 1:
                 stepCount=15
@@ -319,10 +373,65 @@ export default function Game() {
             case 2:
                 stepCount=20
                 break;
+            case 4:
+                stepCount=35
+                break;
+            case 5:
+                stepCount=25
+                break;
+            case 7:
+                stepCount=35
+                break;
             default:
                 stepCount=20
         }
+        //If text make scene with character and text
+        if(text.length>0){
+            const fox = k.add([
+                k.sprite("fox"),
+                k.pos(0,250),
+                k.scale(4)
+            ])
+            const speechBuble = k.add([
+                k.rect(500,100),
+                k.pos(250,350),
+                k.color(0,0,0),
+                k.area()
+            ])
+            let monolog = 0
+            const txt = speechBuble.add([
+                k.text(text[monolog],{width:470,size:25}),
+                k.area(),
+                k.z(1)
+            ])
+            speechBuble.onClick(()=>{
+                if(monolog<text.length-1){
+                    monolog+=1
+                    txt.text=text[monolog]
+                }
+                else{
+                    k.destroy(speechBuble)
+                    k.destroy(fox)
+                }
+            })
+            const btn = speechBuble.add([
+                k.rect(25,25),
+                k.color(255,0,0),
+                k.pos(475,0),
+                k.area()
+            ])
+            btn.add([
+                k.text("X",{width:5}),
+                k.anchor("center"),
+                k.pos(5,-2)
+            ])
+            btn.onClick(()=>{
+                k.destroy(speechBuble)
+                k.destroy(fox)
+            })
+        }
 
+        //Set stepcount for player to see
         const steps = k.add([
             k.circle(50),
             k.pos(50,40),
@@ -334,10 +443,14 @@ export default function Game() {
             k.anchor("center"),
             k.color(0,0,0)
         ])
+
+        //Set player character and level scores
         sessionStorage.setItem("score",score)
         const player = map.get("player")[0]
         let levelScore=0
 
+        //Collision, destroy and check functions to do when collisions or other functions happen
+        //Open goal when player collides with apple
         player.onCollideUpdate("apple",(apple,col)=>{
             if(col.hasOverlap()){
                 const goal = map.get("goal")[0]
@@ -347,6 +460,7 @@ export default function Game() {
             }
         })
 
+        //Add points when player collides with coin
         player.onCollideUpdate("coin",(coin,col)=>{
             if(col.hasOverlap()){
                 levelScore+=200
@@ -354,18 +468,21 @@ export default function Game() {
             }
         })
 
+        //Destroy coin if stone collides with it
         k.onCollideUpdate("coin","stone",(coin,stone,col)=>{
             if(col.hasOverlap()){
                 k.destroy(coin)
             }
         })
 
+        //Destroy apple if stone collides with it
         k.onCollideUpdate("apple","stone",(apple,stone,col)=>{
             if(col.hasOverlap()){
                 k.destroy(apple)
             }
         })
 
+        //On apple destroy restart level
         k.onDestroy("apple",()=>{
             const goal = map.get("goal")[0]
             if(!goal.open){
@@ -373,6 +490,7 @@ export default function Game() {
             }
         })
 
+        //Change level and add points when player collides with goal
         player.onCollideUpdate("goal",(goal,col)=>{
             if(goal.open){
                 if(col.hasOverlap()){
@@ -389,12 +507,14 @@ export default function Game() {
             }
         })
 
-        /*k.onUpdate(()=>{
+        //If stepcount lower than 0, restart level
+        k.onUpdate(()=>{
             if(stepCount<0){
                 k.go("game",levelIdx,score)
             }
-        })*/
+        })
 
+        //Destroy player when collide with enemy
         player.onCollideUpdate("enemy",(enemy,col)=>{
             if(col.target.is("enemy")){
                 if(col.hasOverlap()){
@@ -403,10 +523,12 @@ export default function Game() {
             }
         })
 
+        //On player destroy restart level
         k.onDestroy("player",()=>{
             k.go("game",levelIdx,score)
         })
 
+        //Destroy enemy when collide with stone
         k.onCollideUpdate("stone","enemy",(stone,enemy,col)=>{
             if(col.hasOverlap()){
                 if(enemy.alive){
@@ -420,6 +542,7 @@ export default function Game() {
             }
         })
 
+        //Player collision check with other objects
         function checkCol(move){
             let stop = false
             if(player.getCollisions().length>0){
@@ -495,6 +618,7 @@ export default function Game() {
             }
         }
 
+        //Movable objects collision checking with other objects
         function checkStone(move,target){
             if(target.getCollisions().length>0){
                 for(const collisionStone of target.getCollisions()){
@@ -544,6 +668,7 @@ export default function Game() {
             }
         }
 
+        //Function to control enemy movement
         function enemyMove(){
             for(const enemy of map.get("enemy")){
                 for(const collisionEnemy of enemy.getCollisions()){
@@ -583,7 +708,19 @@ export default function Game() {
         }
 
 
+        //Movement functions
         k.onKeyPress("right",()=>{
+            player.flipX=false
+            if(checkCol("right")){
+                stepCount--
+                stepText.text=stepCount
+                player.moveTo(player.pos.x+64,player.pos.y)
+                if(map.get("enemy").length>0){
+                    enemyMove()
+                }
+            }
+        })
+        k.onKeyPress("d",()=>{
             player.flipX=false
             if(checkCol("right")){
                 stepCount--
@@ -606,8 +743,29 @@ export default function Game() {
                 }
             }
         })
+        k.onKeyPress("a",()=>{
+            player.flipX=true
+            if(checkCol("left")){
+                stepCount--
+                stepText.text=stepCount
+                player.moveTo(player.pos.x-64,player.pos.y)
+                if(map.get("enemy").length>0){
+                    enemyMove()
+                }
+            }
+        })
 
         k.onKeyPress("up",()=>{
+            if(checkCol("up")){
+                stepCount--
+                stepText.text=stepCount
+                player.moveTo(player.pos.x,player.pos.y-64)
+                if(map.get("enemy").length>0){
+                    enemyMove()
+                }
+            }
+        })
+        k.onKeyPress("w",()=>{
             if(checkCol("up")){
                 stepCount--
                 stepText.text=stepCount
@@ -628,16 +786,29 @@ export default function Game() {
                 }
             }
         })
+        k.onKeyPress("s",()=>{
+            if(checkCol("down")){
+                stepCount--
+                stepText.text=stepCount
+                player.moveTo(player.pos.x,player.pos.y+64)
+                if(map.get("enemy").length>0){
+                    enemyMove()
+                }
+            }
+        })
 
 
-        k.debug.inspect=true
+        //k.debug.inspect=true
     })
+
+    //Starting game or going back to scene
     if(sessionStorage.getItem("levelIdx")>0){
         k.go("game",Number(sessionStorage.getItem("levelIdx")),Number(sessionStorage.getItem("score")))
     }else{
         sessionStorage.setItem("levelIdx",0)
         k.go("main")
     }
+
     },[])
 
     return (

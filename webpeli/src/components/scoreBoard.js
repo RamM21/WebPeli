@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect, useState } from "react"
+import React,{ useEffect, useState } from "react"
 import style from './scoreBoard.module.css'
 import array from './data.json'
 
@@ -8,7 +8,7 @@ export default function ScoreBoard() {
     const[data,setData]=useState([])
     
     useEffect(()=>{
-        /*axios.get('')
+        /*axios.get(process.env.REACT_APP_GET_SCORE)
         .then(Response=>{
             setData(Response.data)
         })
@@ -16,7 +16,14 @@ export default function ScoreBoard() {
             console.log(err)
         })*/
         setData(array)
-    },[])
+        scroll()
+    },[data])
+
+    function scroll(){
+        if(document.getElementById("user")){   
+            document.getElementById("user").scrollIntoView({behavior:"smooth"})
+        }
+    }
 
     return(
         <div style={{backgroundColor:"black"}}>
@@ -28,10 +35,19 @@ export default function ScoreBoard() {
             </div>
             <div className={style.box}>
                 
-                {data.map((e,index)=><div className={style.scoreRow}>
-                    <div className={style.position}>{index}</div>
-                    {sessionStorage.getItem("userId")===e.userId ? <div className={style.usersName}>{e.userName}</div> :<div className={style.userName}>{e.userName}</div>}
-                    <div className={style.score}>{e.score}</div>
+                {data.map((e,index)=><div>
+                        {sessionStorage.getItem("userId")===e.userId ?  
+                        <div className={style.scoreRow}>
+                            <div id='user' key={index} className={style.usersPosition}>{index+1}</div>
+                            <div className={style.usersName}>{e.userName}</div>
+                            <div className={style.usersScore}>{e.score}</div>
+                        </div>
+                        :
+                        <div className={style.scoreRow}>
+                            <div key={index} className={style.position}>{index+1}</div>
+                            <div className={style.userName}>{e.userName}</div>
+                            <div className={style.score}>{e.score}</div>
+                        </div>}
                 </div>)}
             </div>
         </div>

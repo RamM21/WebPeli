@@ -16,13 +16,14 @@ export default function Account(){
     function submit(){
         if(password.length>0 || confirmPassword.length>0){
             if(password===confirmPassword){
-                axios('',{"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName})
+                axios.put(process.env.REACT_APP_PUT_USER,{"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName})
                 .then(Response=>{
-                    if(Response.data.successful===true){
+                    console.log(Response.data)
+                    /*if(Response.data.successful===true){
                         alert.success("Changes made successfully")
                     }else{
                         alert.error("Something went wrong try again")
-                    }
+                    }*/
                 })
                 .catch(err=>{
                     console.log(err)

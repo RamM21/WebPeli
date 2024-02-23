@@ -18,7 +18,7 @@ export default function SingUp() {
     function signUp(){
         if(email.length>0 && userName.length>0 && password.length>0 && confirmPassword.length>0){
             if(password===confirmPassword){
-                axios.post('',{"email":email,"userName":userName,"password":password})
+                axios.post(process.env.REACT_APP_SIGNUP,{"email":email,"userName":userName,"password":password})
                 .then(Response=>{
                     if(Response.data.successful===true){
                         alert.success("Sign Up successful redirecting to Login")
