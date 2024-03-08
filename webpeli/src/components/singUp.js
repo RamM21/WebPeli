@@ -26,7 +26,7 @@ export default function SingUp() {
                             navigate('/login')
                         },2000)
                     }else{
-                        alert.error("something went wrong try again")
+                        alert.error("Email or userName already in use")
                     }
                 })
                 .catch(err=>{

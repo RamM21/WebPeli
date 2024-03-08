@@ -14,16 +14,16 @@ export default function Account(){
     const[showConfirmPassword,setShowConfirmPassword]=useState(false)
 
     function submit(){
-        if(password.length>0 || confirmPassword.length>0){
+        if(password.length>0 && confirmPassword.length>0){
             if(password===confirmPassword){
                 axios.put(process.env.REACT_APP_PUT_USER,{"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName})
                 .then(Response=>{
                     console.log(Response.data)
-                    /*if(Response.data.successful===true){
+                    if(Response.data.successful===true){
                         alert.success("Changes made successfully")
                     }else{
                         alert.error("Something went wrong try again")
-                    }*/
+                    }
                 })
                 .catch(err=>{
                     console.log(err)
@@ -33,8 +33,9 @@ export default function Account(){
                 alert.info("Password did not match with Confirm Password try again")
             }
         }else{
-            axios('',{"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName})
+            axios.put(process.env.REACT_APP_PUT_USER,{"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName})
                 .then(Response=>{
+                    console.log(Response.data)
                     if(Response.data.successful===true){
                         alert.success("Changes made successfully")
                     }else{

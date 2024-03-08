@@ -1,21 +1,20 @@
 import axios from 'axios'
 import React,{ useEffect, useState } from "react"
 import style from './scoreBoard.module.css'
-import array from './data.json'
 
 export default function ScoreBoard() {
 
     const[data,setData]=useState([])
     
     useEffect(()=>{
-        /*axios.get(process.env.REACT_APP_GET_SCORE)
+        axios(process.env.REACT_APP_GET_SCORE)
         .then(Response=>{
+            console.log(Response.data)
             setData(Response.data)
         })
         .catch(err=>{
             console.log(err)
-        })*/
-        setData(array)
+        })
         scroll()
     },[data])
 
@@ -26,7 +25,7 @@ export default function ScoreBoard() {
     }
 
     return(
-        <div style={{backgroundColor:"black"}}>
+        <div style={{backgroundColor:"black",height:"931px"}}>
             <div className={style.title}>ScoreBoard</div>
             <div className={style.boxTop}>
                     <div className={style.positionTop}>Position</div>
@@ -36,7 +35,7 @@ export default function ScoreBoard() {
             <div className={style.box}>
                 
                 {data.map((e,index)=><div>
-                        {sessionStorage.getItem("userId")===e.userId ?  
+                        {sessionStorage.getItem("userName")===e.userName ?  
                         <div className={style.scoreRow}>
                             <div id='user' key={index} className={style.usersPosition}>{index+1}</div>
                             <div className={style.usersName}>{e.userName}</div>

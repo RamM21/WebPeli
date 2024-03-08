@@ -1,5 +1,7 @@
 import kaboom from 'kaboom'
 import React,{useEffect} from 'react'
+import axios from 'axios'
+import { useAlert } from 'react-alert'
 import style from './game.module.css'
 import fox from '../Sprites/foxSprite.png'
 import stone from '../Sprites/stone.png'
@@ -31,8 +33,28 @@ import stageChange from '../Sfx/stageChange.wav'
 
 export default function Game() {
     const canvas = React.useRef(null)
+    const alert = useAlert()
+
+    
 
     useEffect(()=>{
+        //Function to post final score to database
+        function postScore(){
+            axios.post(process.env.REACT_APP_POST_SCORE,{"userName":sessionStorage.getItem("userName"),"score":sessionStorage.getItem("score"),"userId":sessionStorage.getItem("userId")})
+            .then(Response=>{
+                console.log(Response.data)
+                if(Response.data.successful===true){
+                    alert.success("Score posted to scoreboard successfully")
+                }
+                else{
+                    alert.error("Something went wrong posting score, try again")
+                }
+            })
+            .catch(err=>{
+                console.log(err)
+                alert.error("Something went wrong posting score, try again")
+            })
+        }
         //Making game context handler
         const k = kaboom({
             width:940,
@@ -63,6 +85,7 @@ export default function Game() {
         k.loadSound("select",select)
         k.loadSound("stage",stageChange)
 
+        //Setting volume for sound
         k.volume(0.2)
 
         k.loadSprite("stone",stone)
@@ -304,6 +327,7 @@ export default function Game() {
     
                 scoreBtn.onClick(()=>{
                     k.play("select")
+                    postScore()
                 })
     
                 scoreBtn.onHoverUpdate(()=>{

@@ -20,12 +20,13 @@ export default function Login(props) {
                 if(Response.data.successful===true){
                     alert.success("Login successful redirecting to mainpage")
                     setTimeout(()=>{
-                        sessionStorage.setItem("userId","1")
+                        sessionStorage.setItem("userId",Response.data.userId)
+                        sessionStorage.setItem("userName",Response.data.userName)
                         props.login(true)
                         navigate('/')
                     },2000)
                 }else{
-                    alert.error("Something went wrong, try again")
+                    alert.error("Wrong password or email try again")
                 }
             })
             .catch(err=>{
