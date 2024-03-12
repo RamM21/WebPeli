@@ -1,0 +1,36 @@
+.box{
+    border: 1px solid black;
+    background-color: orange;
+    border-radius: 5%;
+    margin-left: 44%;
+    width: 260px;
+    height: 330px;
+}
+.background{
+    background-color: black;
+    padding-top: 10%;
+    padding-bottom: 21.2%;
+}
+.topText{
+    margin-left: 3%;
+    font-size: large;
+    text-decoration: underline;
+}
+.input{
+    margin-left: 5%;
+}
+.passwordInput{
+    margin-left: 5%;
+}
+.inputText{
+    font-weight: bold;
+    margin-left: 5%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+}
+.submitButton{
+    margin-top: 6%;
+    margin-left: 34%;
+    font-size: medium;
+    font-weight: bold;
+}

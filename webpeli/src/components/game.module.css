@@ -1,0 +1,9 @@
+.game{
+    padding-left: 3.5%;
+    padding-top: 1.5%;
+    padding-bottom: 1.15%;
+    background-color: black
+}
+.canvas{
+    border: 1px solid orange;
+}
