@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import style from './login.module.css'
-import axios from 'axios'
+import {AwsClient} from 'aws4fetch'
 import { useAlert } from "react-alert"
 
 
@@ -12,26 +12,30 @@ export default function Login(props) {
     const[show,setShow]=useState(false)
     const[email,setEmail]=useState("")
     const[password,setPassword]=useState("")
+    const aws = new AwsClient({
+        accessKeyId:process.env.REACT_APP_KEY_ACCESS,
+        secretAccessKey:process.env.REACT_APP_KEY_PERMISSION,
+        service:process.env.REACT_APP_SERVICE,
+        region:process.env.REACT_APP_REGION
+    })
     
-    function login(){
+    async function login(){
         if(email.length>0 && password.length>0){
-            axios.post(process.env.REACT_APP_LOGIN,{"email":email,"password":password})
-            .then(Response=>{
-                if(Response.data.successful===true){
-                    alert.success("Login successful redirecting to mainpage")
-                    setTimeout(()=>{
-                        sessionStorage.setItem("userId",Response.data.userId)
-                        sessionStorage.setItem("userName",Response.data.userName)
-                        props.login(true)
-                        navigate('/')
-                    },2000)
-                }else{
-                    alert.error("Wrong password or email try again")
-                }
-            })
-            .catch(err=>{
-                console.log(err)
-            })
+            var body = {"email":email,"password":password}
+            body = JSON.stringify(body)
+            var response = await aws.fetch(process.env.REACT_APP_LOGIN,{method:"post",body:body})
+            response = await response.json()
+            if(response.successful===true){
+                alert.success("Login successful redirecting to mainpage")
+                setTimeout(()=>{
+                    sessionStorage.setItem("userId",response.userId)
+                    sessionStorage.setItem("userName",response.userName)
+                    props.login(true)
+                    navigate('/')
+                },2000)
+            }else{
+                alert.error("Wrong password or email try again")
+            }
         }else{
             alert.info("Input both email and password then try again")
         }

@@ -1,22 +1,28 @@
-import axios from 'axios'
+import {AwsClient} from 'aws4fetch'
 import React,{ useEffect, useState } from "react"
 import style from './scoreBoard.module.css'
 
 export default function ScoreBoard() {
 
     const[data,setData]=useState([])
+    const aws = new AwsClient({
+        accessKeyId:process.env.REACT_APP_KEY_ACCESS,
+        secretAccessKey:process.env.REACT_APP_KEY_PERMISSION,
+        service:process.env.REACT_APP_SERVICE,
+        region:process.env.REACT_APP_REGION
+    })
+
+    async function getScore(){
+        const response = await aws.fetch(process.env.REACT_APP_GET_SCORE)
+        return response.json()
+    }
     
     useEffect(()=>{
-        axios(process.env.REACT_APP_GET_SCORE)
-        .then(Response=>{
-            console.log(Response.data)
-            setData(Response.data)
-        })
-        .catch(err=>{
-            console.log(err)
-        })
+        getScore()
+        .then(json=>setData(json))
+        .catch(err=>console.log(err))
         scroll()
-    },[data])
+    },[])
 
     function scroll(){
         if(document.getElementById("user")){   

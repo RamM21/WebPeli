@@ -1,6 +1,6 @@
 import kaboom from 'kaboom'
 import React,{useEffect} from 'react'
-import axios from 'axios'
+import {AwsClient} from 'aws4fetch'
 import { useAlert } from 'react-alert'
 import style from './game.module.css'
 import fox from '../Sprites/foxSprite.png'
@@ -34,27 +34,29 @@ import stageChange from '../Sfx/stageChange.wav'
 export default function Game() {
     const canvas = React.useRef(null)
     const alert = useAlert()
-
-    
+    const aws = new AwsClient({
+        accessKeyId:process.env.REACT_APP_KEY_ACCESS,
+        secretAccessKey:process.env.REACT_APP_KEY_PERMISSION,
+        service:process.env.REACT_APP_SERVICE,
+        region:process.env.REACT_APP_REGION
+    })
+    //Function to post final score to database
+    async function postScore(){
+        var body = {"userName":sessionStorage.getItem("userName"),"score":sessionStorage.getItem("score"),"userId":sessionStorage.getItem("userId")}
+        body = JSON.stringify(body)
+        var response = await aws.fetch(process.env.REACT_APP_POST_SCORE,{method:"post",body:body})
+        response = await response.json()
+        console.log(response)
+        if(response.successful===true){
+            alert.success("Score posted to scoreboard successfully")
+        }
+        else{
+            alert.error("Something went wrong posting score, try again")
+        }
+    }
 
     useEffect(()=>{
-        //Function to post final score to database
-        function postScore(){
-            axios.post(process.env.REACT_APP_POST_SCORE,{"userName":sessionStorage.getItem("userName"),"score":sessionStorage.getItem("score"),"userId":sessionStorage.getItem("userId")})
-            .then(Response=>{
-                console.log(Response.data)
-                if(Response.data.successful===true){
-                    alert.success("Score posted to scoreboard successfully")
-                }
-                else{
-                    alert.error("Something went wrong posting score, try again")
-                }
-            })
-            .catch(err=>{
-                console.log(err)
-                alert.error("Something went wrong posting score, try again")
-            })
-        }
+        
         //Making game context handler
         const k = kaboom({
             width:940,

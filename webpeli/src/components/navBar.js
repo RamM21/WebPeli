@@ -6,6 +6,7 @@ export default function NavBar(props) {
 
     function logout(){
         sessionStorage.removeItem("userId")
+        sessionStorage.removeItem("userName")
         props.login(false)
     }
 

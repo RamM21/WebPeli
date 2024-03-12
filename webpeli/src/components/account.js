@@ -1,6 +1,6 @@
 import { useState } from "react"
 import style from './account.module.css'
-import axios from 'axios'
+import {AwsClient} from 'aws4fetch'
 import { useAlert } from "react-alert"
 
 export default function Account(){
@@ -12,40 +12,40 @@ export default function Account(){
     const[userName,setUserName]=useState("")
     const[showPassword,setShowPassword]=useState(false)
     const[showConfirmPassword,setShowConfirmPassword]=useState(false)
+    const aws = new AwsClient({
+        accessKeyId:process.env.REACT_APP_KEY_ACCESS,
+        secretAccessKey:process.env.REACT_APP_KEY_PERMISSION,
+        service:process.env.REACT_APP_SERVICE,
+        region:process.env.REACT_APP_REGION
+    })
 
-    function submit(){
+    async function submit(){
         if(password.length>0 && confirmPassword.length>0){
             if(password===confirmPassword){
-                axios.put(process.env.REACT_APP_PUT_USER,{"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName})
-                .then(Response=>{
-                    console.log(Response.data)
-                    if(Response.data.successful===true){
-                        alert.success("Changes made successfully")
-                    }else{
-                        alert.error("Something went wrong try again")
-                    }
-                })
-                .catch(err=>{
-                    console.log(err)
+                var body = {"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName}
+                body = JSON.stringify(body)
+                var response = await aws.fetch(process.env.REACT_APP_PUT_USER,{method:"put",body:body})
+                response = await response.json()
+                console.log(response)
+                if(response.successful===true){
+                    alert.success("Changes made successfully")
+                }else{
                     alert.error("Something went wrong try again")
-                })
+                }
             }else{
                 alert.info("Password did not match with Confirm Password try again")
             }
         }else{
-            axios.put(process.env.REACT_APP_PUT_USER,{"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName})
-                .then(Response=>{
-                    console.log(Response.data)
-                    if(Response.data.successful===true){
-                        alert.success("Changes made successfully")
-                    }else{
-                        alert.error("Something went wrong try again")
-                    }
-                })
-                .catch(err=>{
-                    console.log(err)
-                    alert.error("Something went wrong try again")
-                })
+            var body = {"userId":sessionStorage.getItem("userId"),"email":email,"password":password,"userName":userName}
+            body = JSON.stringify(body)
+            var response = await aws.fetch(process.env.REACT_APP_PUT_USER,{method:"put",body:body})
+            response = await response.json()
+            console.log(response)
+            if(response.successful===true){
+                alert.success("Changes made successfully")
+            }else{
+                alert.error("Something went wrong try again")
+            }
         }
     }
 

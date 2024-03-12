@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import style from './singup.module.css'
-import axios from 'axios'
+import {AwsClient} from 'aws4fetch'
 import { useAlert } from "react-alert"
 
 export default function SingUp() {
@@ -14,24 +14,28 @@ export default function SingUp() {
     const[userName,setUserName]=useState("")
     const[password,setPassword]=useState("")
     const[confirmPassword,setConfirmPassword]=useState("")
+    const aws = new AwsClient({
+        accessKeyId:process.env.REACT_APP_KEY_ACCESS,
+        secretAccessKey:process.env.REACT_APP_KEY_PERMISSION,
+        service:process.env.REACT_APP_SERVICE,
+        region:process.env.REACT_APP_REGION
+    })
 
-    function signUp(){
+    async function signUp(){
         if(email.length>0 && userName.length>0 && password.length>0 && confirmPassword.length>0){
             if(password===confirmPassword){
-                axios.post(process.env.REACT_APP_SIGNUP,{"email":email,"userName":userName,"password":password})
-                .then(Response=>{
-                    if(Response.data.successful===true){
-                        alert.success("Sign Up successful redirecting to Login")
-                        setTimeout(()=>{
-                            navigate('/login')
-                        },2000)
-                    }else{
-                        alert.error("Email or userName already in use")
-                    }
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
+                var body={"email":email,"userName":userName,"password":password}
+                body = JSON.stringify(body)
+                var response = await aws.fetch(process.env.REACT_APP_SIGNUP,{method:"post",body:body})
+                response = await response.json()
+                if(response.successful===true){
+                    alert.success("Sign Up successful redirecting to Login")
+                    setTimeout(()=>{
+                        navigate('/login')
+                    },2000)
+                }else{
+                    alert.error("Email or userName already in use")
+                }
             }else{
                 alert.info("Password did not match with Confirm Password try again")
             }
