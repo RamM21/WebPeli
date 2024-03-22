@@ -9,6 +9,8 @@ import apple from '../Sprites/apple.png'
 import coin from '../Sprites/coinSprite.png'
 import grass from '../Sprites/grassSprite.png'
 import goal from '../Sprites/goalSprite.png'
+import key from '../Sprites/keySprite.png'
+import trap from '../Sprites/trapSprite.png'
 import hole from '../Sprites/foxHole.png'
 import bush from '../Sprites/Bush.png'
 import slime from '../Sprites/slimeSprite.png'
@@ -24,9 +26,10 @@ import enemy3 from '../Sfx/enemy3.wav'
 import stone1 from '../Sfx/stone1.wav'
 import stone2 from '../Sfx/stone2.wav'
 import stone3 from '../Sfx/stone3.wav'
-import apple1 from '../Sfx/apple1.wav'
-import apple2 from '../Sfx/apple2.wav'
-import apple3 from '../Sfx/apple3.wav'
+import key1 from '../Sfx/key1.wav'
+import key2 from '../Sfx/key2.wav'
+import key3 from '../Sfx/key3.wav'
+import appleSound from '../Sfx/apple.wav'
 import voice from '../Sfx/voice.wav'
 import select from '../Sfx/select.wav'
 import stageChange from '../Sfx/stageChange.wav'
@@ -77,12 +80,13 @@ export default function Game() {
         k.loadSound("enemy1",enemy1)
         k.loadSound("enemy2",enemy2)
         k.loadSound("enemy3",enemy3)
-        k.loadSound("apple1",apple1)
-        k.loadSound("apple2",apple2)
-        k.loadSound("apple3",apple3)
+        k.loadSound("key1",key1)
+        k.loadSound("key2",key2)
+        k.loadSound("key3",key3)
         k.loadSound("stone1",stone1)
         k.loadSound("stone2",stone2)
         k.loadSound("stone3",stone3)
+        k.loadSound("apple",appleSound)
         k.loadSound("voice",voice)
         k.loadSound("select",select)
         k.loadSound("stage",stageChange)
@@ -105,6 +109,32 @@ export default function Game() {
                     from:0,
                     to:2,
                     speed:3
+                }
+            }
+        })
+        k.loadSprite("key",key,{
+            sliceX:6,
+            anims:{
+                "idle":{
+                    from:0,
+                    to:5,
+                    speed:4,
+                    loop:true
+                }
+            }
+        })
+        k.loadSprite("trap",trap,{
+            sliceX:5,
+            anims:{
+                "up":{
+                    from:0,
+                    to:4,
+                    speed:5
+                },
+                "down":{
+                    from:4,
+                    to:0,
+                    speed:5
                 }
             }
         })
@@ -175,9 +205,9 @@ export default function Game() {
             k.addLevel([
                 " &&&&&&&&&&&",
                 " &  % ??  ¤&",
-                " &  #    # &",
+                " &$ #  + # &",
                 " &    !   &&",
-                " & %    ?  &",
+                " & %  - ?  &",
                 " &  &     @&",
                 " &&&&&&&&&&&",
             ],{
@@ -224,6 +254,21 @@ export default function Game() {
                             k.tile(),
                             k.pos(68,38),
                             k.z(1)
+                        ],
+                        "$":()=>[
+                            k.sprite("key",{anim:"idle"}),
+                            k.pos(68,38),
+                            k.anchor("center"),
+                        ],
+                        "-":()=>[
+                            k.sprite("trap",{frame:0}),
+                            k.pos(68,38),
+                            k.anchor("center"),
+                        ],
+                        "+":()=>[
+                            k.sprite("trap",{frame:4}),
+                            k.pos(68,38),
+                            k.anchor("center"),
                         ]
                     }
             })
@@ -404,56 +449,74 @@ export default function Game() {
         const levels=[
             [
                 " &&&&&&&&&&&",
-                " & !     ? &",
+                " & !     ?¤&",
                 " &&&  &&&&&&",
                 " &    ?? &@&",
-                " &¤&&&&&&& &",
+                " &$&&&&&&& &",
                 " &         &",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
-                " & ! &     &",
+                " & ! &  ¤  &",
                 " &   & @  ?&",
                 " &   &&   &&",
                 " &         &",
-                " &  ?? &¤  &",
+                " &  ?? &$  &",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
-                " & !  ?    &",
+                " &¤       @&",
+                " &&-&&&&&&&&",
+                " && $&!+ -?&",
+                " &&+&&&&& &&",
+                " &         &",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " & !       &",
+                " &&++-++&&&&",
+                " &+-++-++¤&&",
+                " &?-+-$--&&&",
+                " &&&&     @&",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " & !  +-+? &",
                 " &&&##&&&&&&",
                 " &         &",
                 " &¤  &#    &",
-                " &  ?? &  @&",
+                " &  ??$&  @&",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
                 " &    #   &&",
-                " & !  & &  &",
+                " & !  & &$ &",
                 " &&&&&&#&&?&",
-                " &??    @&?&",
-                " &    ¤    &",
+                " &??+   @&?&",
+                " &-+- ¤    &",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
-                " &!        &",
-                " &&?&&   &&&",
-                " &&¤  %#   &",
+                " &!  -+    &",
+                " &&?&&¤  &&&",
+                " &&$  %#   &",
                 " &@%   ??  &",
                 " &&        &",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
-                " &¤   %   @&",
+                " &$   %   @&",
                 " &&&  & ?  &",
-                " &?&&%&&&&&&",
-                " &?    ?#  &",
-                " &        !&",
+                " &¤&&%&&&&&&",
+                " &?+   ?#  &",
+                " &+-      !&",
                 " &&&&&&&&&&&"
             ],
             [
@@ -461,17 +524,17 @@ export default function Game() {
                 " &@   ?    &",
                 " &&&      >&",
                 " &<   !# &&&",
-                " &  >&&?   &",
-                " & ¤       &",
+                " &  >&&?+-+&",
+                " & $    +¤-&",
                 " &&&&&&&&&&&"
             ],
             [
                 " &&&&&&&&&&&",
-                " &?       @&",
+                " &¤       @&",
                 " && &&&&&&&&",
-                " &? &¤ #? !&",
+                " &? &$ #? !&",
                 " & <&     >&",
-                " &&   <    &",
+                " && + <    &",
                 " &&&&&&&&&&&"
             ]
         ]
@@ -556,6 +619,29 @@ export default function Game() {
                     k.anchor("center"),
                     "coin"
                 ],
+                "$":()=>[
+                    k.sprite("key",{anim:"idle"}),
+                    k.pos(68,38),
+                    k.area({scale:1}),
+                    k.anchor("center"),
+                    "key"
+                ],
+                "-":()=>[
+                    k.sprite("trap",{frame:0}),
+                    k.pos(68,38),
+                    k.area({scale:0.9}),
+                    k.anchor("center"),
+                    {active:false},
+                    "trap"
+                ],
+                "+":()=>[
+                    k.sprite("trap",{frame:4}),
+                    k.pos(68,38),
+                    k.area({scale:0.9}),
+                    k.anchor("center"),
+                    {active:true},
+                    "trap"
+                ],
                 "!":()=>[
                     k.sprite("fox",{anim:"idle"}),
                     k.body(),
@@ -563,6 +649,7 @@ export default function Game() {
                     k.anchor('center'),
                     k.tile(),
                     k.pos(68,38),
+                    k.z(1),
                     "player"
                 ]
             }
@@ -590,6 +677,23 @@ export default function Game() {
                 ]
                 break;
             case 2:
+                stepCount=25
+                text=[
+                    "We got "+score+" points from the last place",
+                    "There seems to be traps layed out around here",
+                    "We can go through them when they are down",
+                    "Stepping on them is sure to hurt"
+                ]
+                break;
+            case 3:
+                stepCount=20
+                text=[
+                    "We got "+score+" points from the last place",
+                    "A lot more traps around here lets try to be smart here",
+                    "Don't want to be full of holes by the time we get home"
+                ]
+                break;
+            case 4:
                 stepCount=20
                 text=[
                     "We got "+score+" points from the last place",
@@ -598,7 +702,7 @@ export default function Game() {
                     "But be careful not to block our path to home"
                 ]
                 break;
-            case 3:
+            case 5:
                 stepCount=25
                 text=[
                     "We got "+score+" points from the last place",
@@ -606,7 +710,7 @@ export default function Game() {
                     "let's be clever about this"
                 ]
                 break;
-            case 4:
+            case 6:
                 stepCount=35
                 text=[
                     "We got "+score+" points from the last place",
@@ -615,7 +719,7 @@ export default function Game() {
                     "We'll use the rocks to clear our way from the slimes"
                 ]
                 break;
-            case 5:
+            case 7:
                 stepCount=25
                 text=[
                     "We got "+score+" points from the last place",
@@ -623,7 +727,7 @@ export default function Game() {
                     "Good thing we got these rocks here"
                 ]
                 break;
-            case 6:
+            case 8:
                 stepCount=25
                 text=[
                     "We got "+score+" points from the last place",
@@ -631,7 +735,7 @@ export default function Game() {
                     "Let's move around them or get rid of them with the rocks"
                 ]
                 break;
-            case 7:
+            case 9:
                 stepCount=35
                 text=[
                     "We got "+score+" points from the last place",
@@ -749,13 +853,23 @@ export default function Game() {
         let levelScore=0
 
         //Collision, destroy and check functions to do when collisions or other functions happen
-        //Open goal when player collides with apple
-        player.onCollideUpdate("apple",(apple,col)=>{
+        //Open goal when player collides with key
+        player.onCollideUpdate("key",(key,col)=>{
             if(col.hasOverlap()){
-                k.play("apple"+k.randi(1,3))
+                k.play("key"+k.randi(1,3))
                 const goal = map.get("goal")[0]
                 goal.open=true
                 goal.play("open")
+                k.destroy(key)
+            }
+        })
+
+        //Add steps to stepcount when player collides with apple
+        player.onCollideUpdate("apple",(apple,col)=>{
+            if(col.hasOverlap()){
+                k.play("apple")
+                stepCount+=6
+                stepText.text=stepCount
                 k.destroy(apple)
             }
         })
@@ -783,11 +897,27 @@ export default function Game() {
             }
         })
 
-        //On apple destroy restart level
-        k.onDestroy("apple",()=>{
+        //Destroy key if stone collides with it
+        k.onCollideUpdate("key","stone",(key,stone,col)=>{
+            if(col.hasOverlap()){
+                k.destroy("key")
+            }
+        })
+
+        //On key destroy restart level
+        k.onDestroy("key",()=>{
             const goal = map.get("goal")[0]
             if(!goal.open){
                 k.go("game",levelIdx,score)
+            }
+        })
+
+        player.onCollide("trap",(trap,col)=>{
+            if(col.hasOverlap()){
+                if(trap.active){
+                    stepCount--
+                    stepText.text=stepCount
+                }
             }
         })
 
@@ -845,6 +975,20 @@ export default function Game() {
                 })
             }
         })
+
+        //Change trap active with player steps
+        function trapActive(){
+            for(const trap of map.get("trap")){
+                if(trap.active){
+                    trap.active=false
+                    trap.play("down")
+                }
+                else{
+                    trap.active=true
+                    trap.play("up")
+                }
+            }
+        }
 
         //Player collision check with other objects
         function checkCol(move){
@@ -1043,6 +1187,9 @@ export default function Game() {
                 if(map.get("enemy").length>0){
                     enemyMove()
                 }
+                if(map.get("trap").length>0){
+                    trapActive()
+                }
             }
         })
         k.onKeyPress("d",()=>{
@@ -1054,6 +1201,9 @@ export default function Game() {
                 k.play("walk"+k.randi(1,3))
                 if(map.get("enemy").length>0){
                     enemyMove()
+                }
+                if(map.get("trap").length>0){
+                    trapActive()
                 }
             }
         })
@@ -1068,6 +1218,9 @@ export default function Game() {
                 if(map.get("enemy").length>0){
                     enemyMove()
                 }
+                if(map.get("trap").length>0){
+                    trapActive()
+                }
             }
         })
         k.onKeyPress("a",()=>{
@@ -1079,6 +1232,9 @@ export default function Game() {
                 k.play("walk"+k.randi(1,3))
                 if(map.get("enemy").length>0){
                     enemyMove()
+                }
+                if(map.get("trap").length>0){
+                    trapActive()
                 }
             }
         })
@@ -1092,6 +1248,9 @@ export default function Game() {
                 if(map.get("enemy").length>0){
                     enemyMove()
                 }
+                if(map.get("trap").length>0){
+                    trapActive()
+                }
             }
         })
         k.onKeyPress("w",()=>{
@@ -1102,6 +1261,9 @@ export default function Game() {
                 k.play("walk"+k.randi(1,3))
                 if(map.get("enemy").length>0){
                     enemyMove()
+                }
+                if(map.get("trap").length>0){
+                    trapActive()
                 }
             }
         })
@@ -1115,6 +1277,9 @@ export default function Game() {
                 if(map.get("enemy").length>0){
                     enemyMove()
                 }
+                if(map.get("trap").length>0){
+                    trapActive()
+                }
             }
         })
         k.onKeyPress("s",()=>{
@@ -1126,11 +1291,14 @@ export default function Game() {
                 if(map.get("enemy").length>0){
                     enemyMove()
                 }
+                if(map.get("trap").length>0){
+                    trapActive()
+                }
             }
         })
 
 
-        //k.debug.inspect=true
+        k.debug.inspect=true
     })
 
     //Starting game or going back to scene
