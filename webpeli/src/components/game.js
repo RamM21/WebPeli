@@ -4,16 +4,19 @@ import {AwsClient} from 'aws4fetch'
 import { useAlert } from 'react-alert'
 import style from './game.module.css'
 import fox from '../Sprites/foxSprite.png'
-import stone from '../Sprites/stone.png'
+import stone from '../Sprites/stoneSprite.png'
 import apple from '../Sprites/apple.png'
 import coin from '../Sprites/coinSprite.png'
 import grass from '../Sprites/grassSprite.png'
 import goal from '../Sprites/goalSprite.png'
 import key from '../Sprites/keySprite.png'
 import trap from '../Sprites/trapSprite.png'
-import hole from '../Sprites/foxHole.png'
+import hole from '../Sprites/hole_block.png'
+import stoneHole from '../Sprites/stoneHole_block.png'
 import bush from '../Sprites/Bush.png'
 import slime from '../Sprites/slimeSprite.png'
+import startTeleport from '../Sprites/teleportStartSprite.png'
+import endTeleport from '../Sprites/teleportEndSprite.png'
 import walk1 from '../Sfx/walk1.wav'
 import walk2 from '../Sfx/walk2.wav'
 import walk3 from '../Sfx/walk3.wav'
@@ -30,6 +33,8 @@ import key1 from '../Sfx/key1.wav'
 import key2 from '../Sfx/key2.wav'
 import key3 from '../Sfx/key3.wav'
 import appleSound from '../Sfx/apple.wav'
+import teleportSound from '../Sfx/teleportSound.wav'
+import stoneFall from '../Sfx/stoneFall.wav'
 import voice from '../Sfx/voice.wav'
 import select from '../Sfx/select.wav'
 import stageChange from '../Sfx/stageChange.wav'
@@ -86,6 +91,8 @@ export default function Game() {
         k.loadSound("stone1",stone1)
         k.loadSound("stone2",stone2)
         k.loadSound("stone3",stone3)
+        k.loadSound("stoneFall",stoneFall)
+        k.loadSound("teleport",teleportSound)
         k.loadSound("apple",appleSound)
         k.loadSound("voice",voice)
         k.loadSound("select",select)
@@ -94,14 +101,26 @@ export default function Game() {
         //Setting volume for sound
         k.volume(0.2)
 
-        k.loadSprite("stone",stone)
         k.loadSprite("apple",apple)
         k.loadSprite("hole",hole)
+        k.loadSprite("stoneHole",stoneHole)
         k.loadSprite("bush",bush)
 
         k.loadSprite("grass",grass,{
             sliceX:4,
         })
+
+        k.loadSprite("stone",stone,{
+            sliceX:8,
+            anims:{
+                "fall":{
+                    from:0,
+                    to:7,
+                    speed:5
+                }
+            }
+        })
+
         k.loadSprite("goal",goal,{
             sliceX:3,
             anims:{
@@ -112,6 +131,7 @@ export default function Game() {
                 }
             }
         })
+
         k.loadSprite("key",key,{
             sliceX:6,
             anims:{
@@ -123,6 +143,7 @@ export default function Game() {
                 }
             }
         })
+
         k.loadSprite("trap",trap,{
             sliceX:5,
             anims:{
@@ -138,6 +159,31 @@ export default function Game() {
                 }
             }
         })
+
+        k.loadSprite("teleportStart",startTeleport,{
+            sliceX:8,
+            anims:{
+                "idle":{
+                    from:0,
+                    to:7,
+                    speed:4,
+                    loop:true
+                }
+            }
+        })
+
+        k.loadSprite("teleportEnd",endTeleport,{
+            sliceX:8,
+            anims:{
+                "idle":{
+                    from:0,
+                    to:7,
+                    speed:4,
+                    loop:true
+                }
+            }
+        })
+
         k.loadSprite("coin", coin,{
             sliceX: 6,
             anims:{
@@ -149,6 +195,7 @@ export default function Game() {
                 }
             }
         })
+
         k.loadSprite("slime", slime,{
             sliceX: 6,
             anims:{
@@ -215,7 +262,7 @@ export default function Game() {
                 tileHeight:64,
                     tiles:{
                         "#":()=>[
-                            k.sprite("stone"),
+                            k.sprite("stone",{frame:0}),
                             k.tile({isObstacle:true,edges:["left","right","top","bottom"]}),
                             k.anchor("center"),
                             k.pos(68,36),
@@ -404,7 +451,7 @@ export default function Game() {
                 "coin"
             ])
             k.add([
-                k.sprite("stone"),
+                k.sprite("stone",{frame:0}),
                 k.pos(k.rand(k.width()),k.rand(k.height())),
                 k.anchor("center"),
                 "stone"
@@ -503,6 +550,24 @@ export default function Game() {
             ],
             [
                 " &&&&&&&&&&&",
+                " &¤       @&",
+                " &&&00&&&&&&",
+                " &      -??&",
+                " & # &+-+-+&",
+                " &   &$&  !&",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " & !     +-&",
+                " &     & -+&",
+                " & #&  ¤&&$&",
+                " &    &  &&&",
+                " &&&     0@&",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
                 " &!  -+    &",
                 " &&?&&¤  &&&",
                 " &&$  %#   &",
@@ -521,10 +586,28 @@ export default function Game() {
             ],
             [
                 " &&&&&&&&&&&",
-                " &@   ?    &",
+                " & + +  &+1&",
+                " &!&¤&?  -+&",
+                " &&&&&&&&&&&",
+                " &2+&?&$& @&",
+                " &-  #     &",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " &?&  1&?-2&",
+                " &$    &?-+&",
+                " &&&%&&&   &",
+                " & # ?&%#  &",
+                " &!   &@ % &",
+                " &&&&&&&&&&&"
+            ],
+            [
+                " &&&&&&&&&&&",
+                " &@   ?   1&",
                 " &&&      >&",
                 " &<   !# &&&",
-                " &  >&&?+-+&",
+                " &  >&&?+-2&",
                 " & $    +¤-&",
                 " &&&&&&&&&&&"
             ],
@@ -543,7 +626,7 @@ export default function Game() {
             tileHeight:64,
             tiles:{
                 "#":()=>[
-                    k.sprite("stone"),
+                    k.sprite("stone",{frame:0}),
                     k.tile({isObstacle:true,edges:["left","right","top","bottom"]}),
                     k.body({isStatic:true}),
                     k.area({collisionIgnore:"player"}),
@@ -575,6 +658,15 @@ export default function Game() {
                     k.anchor("center"),
                     k.pos(68,38),
                     "bush"
+                ],
+                "0":()=>[
+                    k.sprite("hole"),
+                    k.body({isStatic:true}),
+                    k.tile({isObstacle:true,edges:["left","right","top","bottom"]}),
+                    k.area(),
+                    k.anchor("center"),
+                    k.pos(68,38),
+                    "hole"
                 ],
                 "<":()=>[
                     k.sprite("slime",{anim:"idle"}),
@@ -642,6 +734,22 @@ export default function Game() {
                     {active:true},
                     "trap"
                 ],
+                "1":()=>[
+                    k.sprite("teleportStart",{anim:"idle"}),
+                    k.pos(68,38),
+                    k.area({scale:0.9}),
+                    k.anchor("center"),
+                    {active:true},
+                    "teleportStart"
+                ],
+                "2":()=>[
+                    k.sprite("teleportEnd",{anim:"idle"}),
+                    k.pos(68,38),
+                    k.area({scale:0.9}),
+                    k.anchor("center"),
+                    {active:false},
+                    "teleportEnd"
+                ],
                 "!":()=>[
                     k.sprite("fox",{anim:"idle"}),
                     k.body(),
@@ -663,8 +771,9 @@ export default function Game() {
                 stepCount=25
                 text = [
                     "Hey there I'm gonna need your help to get back home",
-                    "But first we need to get the apple to snack on at home",
+                    "But first we need to open the hatch with the key",
                     "To score most points let's be efficient with the movement",
+                    "Eating the apple will give us more strength to move",
                     "The coins give extra points but having extra steps gives points too",
                     "Stepcount can be seen up left in the screen"
                 ]
@@ -711,6 +820,22 @@ export default function Game() {
                 ]
                 break;
             case 6:
+                stepCount=25
+                text=[
+                    "We got "+score+" points from the last place",
+                    "There are huge holes on the ground here",
+                    "i Wonder if we can use the stone's to fill them up"
+                ]
+                break;
+            case 7:
+                stepCount=40
+                text=[
+                    "We got "+score+" points from the last place",
+                    "More holes around here",
+                    "See any stone's we could use?"
+                ]
+                break;
+            case 8:
                 stepCount=35
                 text=[
                     "We got "+score+" points from the last place",
@@ -719,7 +844,7 @@ export default function Game() {
                     "We'll use the rocks to clear our way from the slimes"
                 ]
                 break;
-            case 7:
+            case 9:
                 stepCount=25
                 text=[
                     "We got "+score+" points from the last place",
@@ -727,7 +852,22 @@ export default function Game() {
                     "Good thing we got these rocks here"
                 ]
                 break;
-            case 8:
+            case 10:
+                stepCount=30
+                text=[
+                    "We got "+score+" points from the last place",
+                    "Can't see a path around anywhere here",
+                    "What's that glowing thing on the ground there?"
+                ]
+                break;
+            case 11:
+                stepCount=30
+                text=[
+                    "We got "+score+" points from the last place",
+                    "What ever those things are seems like we can use them",
+                ]
+                break;
+            case 12:
                 stepCount=25
                 text=[
                     "We got "+score+" points from the last place",
@@ -735,7 +875,7 @@ export default function Game() {
                     "Let's move around them or get rid of them with the rocks"
                 ]
                 break;
-            case 9:
+            case 13:
                 stepCount=35
                 text=[
                     "We got "+score+" points from the last place",
@@ -912,12 +1052,77 @@ export default function Game() {
             }
         })
 
+        //On player step on trap, reduce stepcount by one
         player.onCollide("trap",(trap,col)=>{
             if(col.hasOverlap()){
                 if(trap.active){
                     stepCount--
                     stepText.text=stepCount
                 }
+            }
+        })
+
+        //Player step on teleport, send to other teleport point
+        player.onCollide("teleportStart",(teleportStart,col)=>{
+            const teleportEnd = map.get("teleportEnd")[0]
+            if(teleportStart.active){
+                player.moveTo(teleportEnd.pos.x,teleportEnd.pos.y)
+                k.play("teleport")
+                teleportStart.active=false
+            }
+            else{
+                teleportStart.active=true
+            }
+        })
+
+        player.onCollide("teleportEnd",(teleportEnd,col)=>{
+            const teleportStart = map.get("teleportStart")[0]
+            if(teleportEnd.active){
+                player.moveTo(teleportStart.pos.x,teleportStart.pos.y)
+                k.play("teleport")
+                teleportEnd.active=false
+            }
+            else{
+                teleportEnd.active=true
+            }
+            
+        })
+
+        //Stone drops to hole
+        k.onCollideUpdate("stone","hole",(stone,hole,col)=>{
+            if(col.hasOverlap()){
+                stone.play("fall")
+                k.play("stoneFall")
+                var x = hole.pos.x
+                var y = hole.pos.y
+                k.destroy(hole)
+                k.wait(2,()=>{
+                    k.destroy(stone)
+                })
+                k.wait(2.2,()=>{
+                    map.add([
+                        k.sprite("stoneHole"),
+                        k.pos(x,y),
+                        k.anchor("center"),
+                        k.z(0)
+                    ])
+                })
+                /*k.wait(0.2,()=>{
+                    k.destroy(hole)
+                    k.destroy(stone)
+                    map.add([
+                        k.sprite("stoneHole"),
+                        k.pos(x,y),
+                        k.anchor("center"),
+                        k.z(0)
+                    ])
+                })*/
+                /*k.add([
+                    k.sprite("stoneHole"),
+                    k.pos(x,y),
+                    k.anchor("center"),
+                    k.z(0)
+                ])*/
             }
         })
 
@@ -953,6 +1158,13 @@ export default function Game() {
                 if(col.hasOverlap()){
                     k.destroy(player)
                 }
+            }
+        })
+
+        //Destroy player if collide with hole
+        player.onCollideUpdate("hole",(hole,col)=>{
+            if(col.hasOverlap()){
+                k.destroy(player)
             }
         })
 
@@ -1306,7 +1518,7 @@ export default function Game() {
         k.go("game",Number(sessionStorage.getItem("levelIdx")),Number(sessionStorage.getItem("score")))
     }else{
         sessionStorage.setItem("levelIdx",0)
-        k.go("main")
+        k.go("game",10,0)
     }
 
     },[])
