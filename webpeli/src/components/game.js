@@ -319,7 +319,7 @@ export default function Game() {
                         ]
                     }
             })
-            k.debug.inspect=true
+            //k.debug.inspect=true
             const btn=k.add([
                 k.pos(k.width()/2.08,360),
                 k.area(),
@@ -352,7 +352,7 @@ export default function Game() {
         k.scene("win",(finalScore)=>{
 
             sessionStorage.setItem("score",finalScore)
-            k.debug.inspect=true
+            //k.debug.inspect=true
             k.add([
                 k.pos(k.width()/3.1,30),
                 k.area(),
@@ -1085,7 +1085,6 @@ export default function Game() {
             else{
                 teleportEnd.active=true
             }
-            
         })
 
         //Stone drops to hole
@@ -1107,22 +1106,6 @@ export default function Game() {
                         k.z(0)
                     ])
                 })
-                /*k.wait(0.2,()=>{
-                    k.destroy(hole)
-                    k.destroy(stone)
-                    map.add([
-                        k.sprite("stoneHole"),
-                        k.pos(x,y),
-                        k.anchor("center"),
-                        k.z(0)
-                    ])
-                })*/
-                /*k.add([
-                    k.sprite("stoneHole"),
-                    k.pos(x,y),
-                    k.anchor("center"),
-                    k.z(0)
-                ])*/
             }
         })
 
@@ -1510,7 +1493,7 @@ export default function Game() {
         })
 
 
-        k.debug.inspect=true
+        //k.debug.inspect=true
     })
 
     //Starting game or going back to scene
@@ -1518,7 +1501,7 @@ export default function Game() {
         k.go("game",Number(sessionStorage.getItem("levelIdx")),Number(sessionStorage.getItem("score")))
     }else{
         sessionStorage.setItem("levelIdx",0)
-        k.go("game",10,0)
+        k.go("main")
     }
 
     },[])
