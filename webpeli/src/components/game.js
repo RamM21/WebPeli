@@ -1040,7 +1040,7 @@ export default function Game() {
         //Destroy key if stone collides with it
         k.onCollideUpdate("key","stone",(key,stone,col)=>{
             if(col.hasOverlap()){
-                k.destroy("key")
+                k.destroy(key)
             }
         })
 
@@ -1297,6 +1297,32 @@ export default function Game() {
                         }
                     }
                     if(object.is("goal")){
+                        let x = target.pos.x-object.pos.x
+                        let y = target.pos.y-object.pos.y
+                        if(move==="left" && x>0 && y===0){
+                            return true
+                        }if(move==="right" && x<0 && y===0){
+                            return true
+                        }if(move==="up" && x===0 && y>0){
+                            return true
+                        }if(move==="down" && x===0 && y<0){
+                            return true
+                        }
+                    }
+                    if(object.is("trap")){
+                        let x = target.pos.x-object.pos.x
+                        let y = target.pos.y-object.pos.y
+                        if(move==="left" && x>0 && y===0){
+                            return true
+                        }if(move==="right" && x<0 && y===0){
+                            return true
+                        }if(move==="up" && x===0 && y>0){
+                            return true
+                        }if(move==="down" && x===0 && y<0){
+                            return true
+                        }
+                    }
+                    if(object.is("teleport")){
                         let x = target.pos.x-object.pos.x
                         let y = target.pos.y-object.pos.y
                         if(move==="left" && x>0 && y===0){
